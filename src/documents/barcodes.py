@@ -9,7 +9,6 @@ from typing import Dict
 from typing import List
 from typing import Optional
 
-import magic
 from django.conf import settings
 from pdf2image import convert_from_path
 from pdf2image.exceptions import PDFPageCountError
@@ -63,7 +62,7 @@ class DocumentBarcodeInfo:
 
 
 @lru_cache(maxsize=8)
-def supported_file_type(mime_type) -> bool:
+def supported_file_type(mime_type: str) -> bool:
     """
     Determines if the file is valid for barcode
     processing, based on MIME type and settings
@@ -98,34 +97,15 @@ def barcode_reader(image: Image) -> List[str]:
     return barcodes
 
 
-def get_file_mime_type(path: str) -> str:
-    """
-    Determines the file type, based on MIME type.
-
-    Returns the MIME type.
-    """
-    mime_type = magic.from_file(path, mime=True)
-    logger.debug(f"Detected mime type: {mime_type}")
-    return mime_type
-
-
-def convert_from_tiff_to_pdf(filepath: str) -> str:
+def convert_from_tiff_to_pdf(filepath: Path) -> Path:
     """
     converts a given TIFF image file to pdf into a temporary directory.
 
     Returns the new pdf file.
     """
-    file_name = os.path.splitext(os.path.basename(filepath))[0]
-    mime_type = get_file_mime_type(filepath)
     tempdir = tempfile.mkdtemp(prefix="paperless-", dir=settings.SCRATCH_DIR)
     # use old file name with pdf extension
-    if mime_type == "image/tiff":
-        newpath = os.path.join(tempdir, file_name + ".pdf")
-    else:
-        logger.warning(
-            f"Cannot convert mime type {str(mime_type)} from {str(filepath)} to pdf.",
-        )
-        return None
+    newpath = Path(tempdir) / Path(filepath.name).with_suffix(".pdf")
     with Image.open(filepath) as image:
         images = []
         for i, page in enumerate(ImageSequence.Iterator(image)):
@@ -141,11 +121,12 @@ def convert_from_tiff_to_pdf(filepath: str) -> str:
                 f"Could not save the file as pdf. Error: {str(e)}",
             )
             return None
-    return newpath
+    return Path(newpath)
 
 
 def scan_file_for_barcodes(
-    filepath: str,
+    filepath: Path,
+    mime_type: str,
 ) -> DocumentBarcodeInfo:
     """
     Scan the provided pdf file for any barcodes
@@ -170,7 +151,6 @@ def scan_file_for_barcodes(
         return detected_barcodes
 
     pdf_filepath = None
-    mime_type = get_file_mime_type(filepath)
     barcodes = []
 
     if supported_file_type(mime_type):
@@ -252,7 +232,7 @@ def get_asn_from_barcodes(barcodes: List[Barcode]) -> Optional[int]:
     return asn
 
 
-def separate_pages(filepath: str, pages_to_split_on: Dict[int, bool]) -> List[str]:
+def separate_pages(filepath: str, pages_to_split_on: Dict[int, bool]) -> List[Path]:
     """
     Separate the provided pdf file on the pages_to_split_on.
     The pages which are defined by the keys in page_numbers
@@ -307,8 +287,8 @@ def separate_pages(filepath: str, pages_to_split_on: Dict[int, bool]) -> List[st
         output_filename = f"{fname}_document_{doc_idx}.pdf"
 
         logger.debug(f"pdf no:{doc_idx} has {len(dst.pages)} pages")
-        savepath = os.path.join(tempdir, output_filename)
-        with open(savepath, "wb") as out:
+        savepath = Path(os.path.join(tempdir, output_filename))
+        with savepath.open("wb") as out:
             dst.save(out)
         document_paths.append(savepath)
 
