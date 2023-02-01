@@ -5,6 +5,9 @@
 [![Chat on Matrix](https://matrix.to/img/matrix-badge.svg)](https://matrix.to/#/%23paperlessngx%3Amatrix.org)
 [![demo](https://cronitor.io/badges/ve7ItY/production/W5E_B9jkelG9ZbDiNHUPQEVH3MY.svg)](https://demo.paperless-ngx.com)
 
+![Docker Image Size (tag)](https://img.shields.io/docker/image-size/paperlessngx/paperless-ngx/latest?label=%3Alatest)
+![Docker Image Size (tag)](https://img.shields.io/docker/image-size/paperlessngx/paperless-ngx/dev?label=%3Adev)
+
 <p align="center">
 <img src="https://github.com/paperless-ngx/paperless-ngx/raw/main/resources/logo/web/png/Black%20logo%20-%20no%20background.png#gh-light-mode-only" width="50%" />
 <img src="https://github.com/paperless-ngx/paperless-ngx/raw/main/resources/logo/web/png/White%20logo%20-%20no%20background.png#gh-dark-mode-only" width="50%" />
@@ -21,8 +24,10 @@ Paperless-ngx forked from [paperless-ng](https://github.com/jonaswinkler/paperle
 
 A demo is available at [demo.paperless-ngx.com](https://demo.paperless-ngx.com) using login `demo` / `demo`. _Note: demo content is reset frequently and confidential information should not be uploaded._
 
+- [Paperless-ngx](#paperless-ngx)
 - [Features](#features)
 - [Getting started](#getting-started)
+  - [Documentation](#documentation)
 - [Contributing](#contributing)
   - [Community Support](#community-support)
   - [Translation](#translation)
