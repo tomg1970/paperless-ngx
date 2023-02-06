@@ -188,9 +188,9 @@ libstdc++6                              10.2.1-6
 libsystemd0                             247.3-7+deb11u1
 libtasn1-6                              4.16.0-2+deb11u1
 libtasn1-6-dev                          4.16.0-2+deb11u1
-libtiff-dev                             4.2.0-1+deb11u1
-libtiff5                                4.2.0-1+deb11u1
-libtiffxx5                              4.2.0-1+deb11u1
+libtiff-dev                             4.2.0-1+deb11u3
+libtiff5                                4.2.0-1+deb11u3
+libtiffxx5                              4.2.0-1+deb11u3
 libtinfo6                               6.2+20201114-2
 libtirpc-common                         1.3.1-1+deb11u1
 libtirpc-dev                            1.3.1-1+deb11u1

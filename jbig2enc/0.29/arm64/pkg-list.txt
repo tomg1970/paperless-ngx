@@ -32,8 +32,8 @@ gcc                                     4:10.2.1-1
 gcc-10                                  10.2.1-6
 gcc-10-base                             10.2.1-6
 gcc-9-base                              9.3.0-22
-git                                     1:2.30.2-1
-git-man                                 1:2.30.2-1
+git                                     1:2.30.2-1+deb11u1
+git-man                                 1:2.30.2-1+deb11u1
 gpgv                                    2.2.27-2+deb11u2
 grep                                    3.6-1
 gzip                                    1.10-4+deb11u1
@@ -61,7 +61,7 @@ libcrypt-dev                            1:4.4.18-4
 libcrypt1                               1:4.4.18-4
 libctf-nobfd0                           2.35.2-2
 libctf0                                 2.35.2-2
-libcurl3-gnutls                         7.74.0-1.3+deb11u3
+libcurl3-gnutls                         7.74.0-1.3+deb11u5
 libdb5.3                                5.3.28+dfsg1-0.8
 libdebconfclient0                       0.260
 libdeflate0                             1.7-1
@@ -134,7 +134,7 @@ libstdc++-10-dev                        10.2.1-6
 libstdc++6                              10.2.1-6
 libsystemd0                             247.3-7+deb11u1
 libtasn1-6                              4.16.0-2+deb11u1
-libtiff5                                4.2.0-1+deb11u1
+libtiff5                                4.2.0-1+deb11u3
 libtinfo6                               6.2+20201114-2
 libtirpc-common                         1.3.1-1+deb11u1
 libtirpc-dev                            1.3.1-1+deb11u1
