@@ -23,10 +23,11 @@ from documents.models import User
 from documents.sanity_checker import check_sanity
 from documents.settings import EXPORTER_FILE_NAME
 from documents.tests.utils import DirectoriesMixin
+from documents.tests.utils import FileSystemAssertsMixin
 from documents.tests.utils import paperless_environment
 
 
-class TestExportImport(DirectoriesMixin, TestCase):
+class TestExportImport(DirectoriesMixin, FileSystemAssertsMixin, TestCase):
     def setUp(self) -> None:
         self.target = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, self.target)
@@ -353,18 +354,18 @@ class TestExportImport(DirectoriesMixin, TestCase):
         )
 
         m = self._do_export(use_filename_format=True)
-        self.assertTrue(os.path.isfile(os.path.join(self.target, "wow1", "c.pdf")))
+        self.assertIsFile(os.path.join(self.target, "wow1", "c.pdf"))
 
         self.assertTrue(os.path.exists(os.path.join(self.target, "manifest.json")))
 
         self.d1.title = "new_title"
         self.d1.save()
         self._do_export(use_filename_format=True, delete=True)
-        self.assertFalse(os.path.isfile(os.path.join(self.target, "wow1", "c.pdf")))
-        self.assertFalse(os.path.isdir(os.path.join(self.target, "wow1")))
-        self.assertTrue(os.path.isfile(os.path.join(self.target, "new_title", "c.pdf")))
+        self.assertIsNotFile(os.path.join(self.target, "wow1", "c.pdf"))
+        self.assertIsNotDir(os.path.join(self.target, "wow1"))
+        self.assertIsFile(os.path.join(self.target, "new_title", "c.pdf"))
         self.assertTrue(os.path.exists(os.path.join(self.target, "manifest.json")))
-        self.assertTrue(os.path.isfile(os.path.join(self.target, "wow2", "none.pdf")))
+        self.assertIsFile(os.path.join(self.target, "wow2", "none.pdf"))
         self.assertTrue(
             os.path.isfile(os.path.join(self.target, "wow2", "none_01.pdf")),
         )
@@ -407,7 +408,7 @@ class TestExportImport(DirectoriesMixin, TestCase):
             f"export-{timezone.localdate().isoformat()}.zip",
         )
 
-        self.assertTrue(os.path.isfile(expected_file))
+        self.assertIsFile(expected_file)
 
         with ZipFile(expected_file) as zip:
             self.assertEqual(len(zip.namelist()), 11)
@@ -444,7 +445,7 @@ class TestExportImport(DirectoriesMixin, TestCase):
             f"export-{timezone.localdate().isoformat()}.zip",
         )
 
-        self.assertTrue(os.path.isfile(expected_file))
+        self.assertIsFile(expected_file)
 
         with ZipFile(expected_file) as zip:
             # Extras are from the directories, which also appear in the listing

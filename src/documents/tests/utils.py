@@ -1,8 +1,10 @@
-import os
 import shutil
 import tempfile
 from collections import namedtuple
 from contextlib import contextmanager
+from os import PathLike
+from pathlib import Path
+from typing import Union
 from unittest import mock
 
 from django.apps import apps
@@ -16,23 +18,22 @@ def setup_directories():
 
     dirs = namedtuple("Dirs", ())
 
-    dirs.data_dir = tempfile.mkdtemp()
-    dirs.scratch_dir = tempfile.mkdtemp()
-    dirs.media_dir = tempfile.mkdtemp()
-    dirs.consumption_dir = tempfile.mkdtemp()
-    dirs.static_dir = tempfile.mkdtemp()
-    dirs.index_dir = os.path.join(dirs.data_dir, "index")
-    dirs.originals_dir = os.path.join(dirs.media_dir, "documents", "originals")
-    dirs.thumbnail_dir = os.path.join(dirs.media_dir, "documents", "thumbnails")
-    dirs.archive_dir = os.path.join(dirs.media_dir, "documents", "archive")
-    dirs.logging_dir = os.path.join(dirs.data_dir, "log")
+    dirs.data_dir = Path(tempfile.mkdtemp())
+    dirs.scratch_dir = Path(tempfile.mkdtemp())
+    dirs.media_dir = Path(tempfile.mkdtemp())
+    dirs.consumption_dir = Path(tempfile.mkdtemp())
+    dirs.static_dir = Path(tempfile.mkdtemp())
+    dirs.index_dir = dirs.data_dir / Path("index")
+    dirs.originals_dir = dirs.media_dir / Path("documents") / Path("originals")
+    dirs.thumbnail_dir = dirs.media_dir / Path("documents") / Path("thumbnails")
+    dirs.archive_dir = dirs.media_dir / Path("documents") / Path("archive")
+    dirs.logging_dir = dirs.data_dir / Path("log")
 
-    os.makedirs(dirs.index_dir, exist_ok=True)
-    os.makedirs(dirs.originals_dir, exist_ok=True)
-    os.makedirs(dirs.thumbnail_dir, exist_ok=True)
-    os.makedirs(dirs.archive_dir, exist_ok=True)
-
-    os.makedirs(dirs.logging_dir, exist_ok=True)
+    dirs.index_dir.mkdir(parents=True, exist_ok=True)
+    dirs.originals_dir.mkdir(parents=True, exist_ok=True)
+    dirs.thumbnail_dir.mkdir(parents=True, exist_ok=True)
+    dirs.archive_dir.mkdir(parents=True, exist_ok=True)
+    dirs.logging_dir.mkdir(parents=True, exist_ok=True)
 
     dirs.settings_override = override_settings(
         DATA_DIR=dirs.data_dir,
@@ -45,8 +46,8 @@ def setup_directories():
         LOGGING_DIR=dirs.logging_dir,
         INDEX_DIR=dirs.index_dir,
         STATIC_ROOT=dirs.static_dir,
-        MODEL_FILE=os.path.join(dirs.data_dir, "classification_model.pickle"),
-        MEDIA_LOCK=os.path.join(dirs.media_dir, "media.lock"),
+        MODEL_FILE=dirs.data_dir / Path("classification_model.pickle"),
+        MEDIA_LOCK=dirs.media_dir / Path("media.lock"),
     )
     dirs.settings_override.enable()
 
@@ -85,6 +86,24 @@ class DirectoriesMixin:
     def tearDown(self) -> None:
         super().tearDown()
         remove_dirs(self.dirs)
+
+
+class FileSystemAssertsMixin:
+    def assertIsFile(self, path: Union[PathLike, str]):
+        if not Path(path).resolve().is_file():
+            raise AssertionError(f"File does not exist: {path}")
+
+    def assertIsNotFile(self, path: Union[PathLike, str]):
+        if Path(path).resolve().is_file():
+            raise AssertionError(f"File does exist: {path}")
+
+    def assertIsDir(self, path: Union[PathLike, str]):
+        if not Path(path).resolve().is_dir():
+            raise AssertionError(f"Dir does not exist: {path}")
+
+    def assertIsNotDir(self, path: Union[PathLike, str]):
+        if Path(path).resolve().is_dir():
+            raise AssertionError(f"Dir does exist: {path}")
 
 
 class ConsumerProgressMixin:
